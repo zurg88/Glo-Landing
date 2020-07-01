@@ -40,7 +40,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
 			if (timer.timeRemaining > 0) {
 				let	idInterval = setInterval(updateClock, 1000);
-				alert('!')
 			}
 			
 		}
