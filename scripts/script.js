@@ -59,19 +59,30 @@ window.addEventListener('DOMContentLoaded', () => {
 		const btnMenu = document.querySelector('.menu');
 		const menu = document.querySelector('menu');
 		const closeBtn = document.querySelector('.close-btn');
-		const menuIrem = menu.querySelectorAll('ul>li');
+		const menuItem = menu.querySelectorAll('ul>li');
 
 		const handlerMenu = () => {
 			menu.classList.toggle('active-menu');
+
 		};
 
-		btnMenu.addEventListener('click', handlerMenu);
-
-		closeBtn.addEventListener('click', handlerMenu);
-
-		menuIrem.forEach(item => {
-			item.addEventListener('click', handlerMenu);
+		document.addEventListener('click', event => {
+			const target = event.target;
+			console.log(target);
+			if (target.closest('.menu')) {
+				handlerMenu();
+			} else {
+				menu.classList.remove('active-menu');
+			}
 		});
+
+		// btnMenu.addEventListener('click', handlerMenu);
+
+		// closeBtn.addEventListener('click', handlerMenu);
+
+		// menuIrem.forEach(item => {
+		// 	item.addEventListener('click', handlerMenu);
+		// });
 	};
 	toggleMenu();
 
@@ -86,7 +97,6 @@ window.addEventListener('DOMContentLoaded', () => {
 				if (document.documentElement.clientWidth > 768) {
 					showPopupAnimation();
 				}
-
 				popup.style.display = 'block';
 			});
 		});
@@ -123,10 +133,51 @@ window.addEventListener('DOMContentLoaded', () => {
 				closePopupAnimation();
 			});
 		});
+
+		popup.addEventListener('click', event => {
+			let target = event.target;
+			target = target.closest('.popup-content');
+
+			if (!target) {
+				closePopupAnimation();
+			}
+		});
 	};
 
 	togglePopup();
 
+	// Tabs
 
+	const tabs = () => {
+		const tabHeader = document.querySelector('.service-header'),
+			tab = tabHeader.querySelectorAll('.service-header-tab'),
+			tabContent = document.querySelectorAll('.service-tab');
+
+		const toggleTabContent = index => {
+			for (let i = 0; i < tabContent.length; i++) {
+				if (index === i) {
+					tabContent[i].classList.remove('d-none');
+					tab[i].classList.add('active');
+				} else {
+					tabContent[i].classList.add('d-none');
+					tab[i].classList.remove('active');
+				}
+			}
+		};
+
+		tabHeader.addEventListener('click', event => {
+			let target = event.target;
+			target = target.closest('.service-header-tab');
+			if (target) {
+				tab.forEach((item, i) => {
+					if (item === target) {
+						toggleTabContent(i);
+					}
+				});
+			}
+		});
+	};
+
+	tabs();
 
 });
