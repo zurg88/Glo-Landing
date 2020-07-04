@@ -1,8 +1,6 @@
 /* eslint-disable no-empty */
 /* eslint-disable no-mixed-spaces-and-tabs */
 
-
-
 window.addEventListener('DOMContentLoaded', () => {
 
 	function countTimer(daedline) {
@@ -91,11 +89,15 @@ window.addEventListener('DOMContentLoaded', () => {
 		const popup = document.querySelector('.popup');
 		const popupClose = document.querySelectorAll('.popup-close');
 		const popupBtn = document.querySelectorAll('.popup-btn');
+		const popupContent = document.querySelector('.popup-content');
 
 		popupBtn.forEach(item => {
 			item.addEventListener('click', () => {
 				if (document.documentElement.clientWidth > 768) {
 					showPopupAnimation();
+				} else if (document.documentElement.clientWidth < 768) {
+					popup.style.top = '0%';
+					popupContent.style.top = '10%';
 				}
 				popup.style.display = 'block';
 			});
@@ -120,11 +122,14 @@ window.addEventListener('DOMContentLoaded', () => {
 			let count2 = 10;
 			requestAnimationFrame(function popupAnimation()  {
 				count1 -= 10;
-				count2 -= 4;
+				count2 -= 14;
 				popup.style.top = count1 + '%';
 				popupContent.style.top = count2 + '%';
-				if (count2 > -110) requestAnimationFrame(popupAnimation);
-				// popup.style.display = 'none';
+				if (count1 > -110) {
+					requestAnimationFrame(popupAnimation);
+				} else if (count1 === -110) {
+					 popup.style.display = 'none';
+				}
 			});
 		}
 
