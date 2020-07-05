@@ -218,11 +218,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		 }
 
 		 createDots();
-		 
+
 		 let dot = portfolioDots.querySelectorAll('.dot');
-
-		 console.log(dot);
-
 
 		 const prevSlide = (elem, index, strClass) => {
 			elem[index].classList.remove(strClass);
@@ -231,7 +228,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		 const nextSlide = (elem, index, strClass) => {
 			elem[index].classList.add(strClass);
 		 };
-
 
 		 const autoPlaySlide = () => {
 			prevSlide(slide, currentSlide, 'portfolio-item-active');
