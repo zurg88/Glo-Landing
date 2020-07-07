@@ -48,7 +48,12 @@ class Todo {
 
 	addTodo(event) {
 		event.preventDefault();
-		if (this.input.value.trim()) {
+		if (this.input.value === '') {
+			return alert(' Пустые дела добавляют только лентяи!');
+		 }
+
+		if (this.input.value.trim() || this.input.value === '') {
+
 			const newTodo = {
 				value: this.input.value,
 				completed: false,
@@ -58,6 +63,12 @@ class Todo {
 			this.todoData.set(newTodo.key, newTodo);
 			this.input.value = '';
 			this.render();
+		} else {
+			this.input.value === '';
+			
+			 alert(' Пустые дела добавляют только лентяи!');
+			 this.render();
+			
 		}
 	}
 
