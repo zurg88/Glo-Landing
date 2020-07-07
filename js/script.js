@@ -80,7 +80,12 @@ class Todo {
 	completedItem(target) {
 		let parent = target.closest('.todo-item');
 		let parentObj = this.todoData.get(parent.key);
-		parentObj.completed = true;
+		if(parentObj.completed) {
+			parentObj.completed = false;
+		} else {
+			parentObj.completed = true;
+		}
+		
 		this.render();
 	}
 
@@ -94,6 +99,7 @@ class Todo {
 		textTodo.style.display = 'none';
 		parent.prepend(input);
 		input.addEventListener('change', () => {
+			input.value.trim();
 			textTodo.textContent = input.value;
 			textTodo.style.display = 'inline';
 
