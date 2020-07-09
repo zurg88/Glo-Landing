@@ -328,7 +328,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			item.addEventListener('input', () => {
 				item.value = item.value.replace(/\D/g, '');
 			});
-			// item.value.replace('/[^0-9$]i/', '');
 		});
 	};
 
