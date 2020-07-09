@@ -1,3 +1,4 @@
+/* eslint-disable arrow-parens */
 /* eslint-disable no-empty */
 /* eslint-disable no-mixed-spaces-and-tabs */
 
@@ -219,7 +220,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		 createDots();
 
-		 let dot = portfolioDots.querySelectorAll('.dot');
+		 const dot = portfolioDots.querySelectorAll('.dot');
 
 		 const prevSlide = (elem, index, strClass) => {
 			elem[index].classList.remove(strClass);
@@ -304,7 +305,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	const changeImageFronData = () => {
 		const command = document.getElementById('command');
-		command.addEventListener('mouseover', (event) => {
+		command.addEventListener('mouseover', event => {
 			const target = event.target;
 			if (target.matches('.command__photo')) {
 				const targetSrc = target.getAttribute('src');
@@ -324,14 +325,73 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	const calcValidation = () => {
 		const calcItems = document.querySelectorAll('.calc-item');
-		calcItems.forEach((item) => {
+		calcItems.forEach(item => {
 			item.addEventListener('input', () => {
-				item.value = item.value.replace(/\D/g, '');
+				if (!item.classList.contains('calc-type')) {
+					item.value = item.value.replace(/\D/g, '');
+				}
 			});
 		});
 	};
 
 	calcValidation();
+
+	const calc = (price = 100) => {
+		const calcBlock = document.querySelector('.calc-block'),
+			calcType = document.querySelector('.calc-type'),
+			calcSquare = document.querySelector('.calc-square'),
+			calcDay = document.querySelector('.calc-day'),
+			calcCount = document.querySelector('.calc-count'),
+			totalValue = document.getElementById('total');
+
+		const countSum = () => {
+			let total = 0;
+			let countValue = 1;
+			let dayValue = 1;
+			const typeValue = calcType.options[calcType.selectedIndex].value;
+			const	squareValue = +calcSquare.value;
+
+			if (calcCount.value > 1) {
+				countValue += (calcCount.value - 1) / 10;
+			}
+
+			if (calcDay.value && calcDay.value < 5) {
+				dayValue *= 2;
+			} else if (calcDay.value && calcDay.value < 10) {
+				dayValue *= 1.5;
+			}
+
+			if (typeValue && squareValue) {
+				total = price * typeValue * squareValue * countValue * dayValue;
+				total = Math.floor(total);
+			}
+
+			if (total !== 0) {
+				let numValue = Number(totalValue.textContent);
+				console.log(total);
+				const interval = setInterval(() => {
+					numValue++;
+					totalValue.textContent = numValue;
+					if (numValue === total) {
+						clearInterval(interval);
+					}
+				}, 10);
+			}
+
+		};
+
+		calcBlock.addEventListener('change', (event) => {
+			const target = event.target;
+
+			if (target === calcType || target === calcSquare ||
+				target === calcDay || target === calcCount) {
+				countSum();
+			}
+		});
+
+	};
+
+	calc(100);
 
 
 });
