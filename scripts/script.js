@@ -1,4 +1,3 @@
-/* eslint-disable arrow-parens */
 /* eslint-disable no-empty */
 /* eslint-disable no-mixed-spaces-and-tabs */
 
@@ -327,71 +326,97 @@ window.addEventListener('DOMContentLoaded', () => {
 		const calcItems = document.querySelectorAll('.calc-item');
 		calcItems.forEach(item => {
 			item.addEventListener('input', () => {
-				if (!item.classList.contains('calc-type')) {
-					item.value = item.value.replace(/\D/g, '');
-				}
+				item.value = item.value.replace(/\D/g, '');
 			});
 		});
 	};
 
 	calcValidation();
 
-	const calc = (price = 100) => {
-		const calcBlock = document.querySelector('.calc-block'),
-			calcType = document.querySelector('.calc-type'),
-			calcSquare = document.querySelector('.calc-square'),
-			calcDay = document.querySelector('.calc-day'),
-			calcCount = document.querySelector('.calc-count'),
-			totalValue = document.getElementById('total');
+	// Form Validation
 
-		const countSum = () => {
-			let total = 0;
-			let countValue = 1;
-			let dayValue = 1;
-			const typeValue = calcType.options[calcType.selectedIndex].value;
-			const	squareValue = +calcSquare.value;
+	const formValidation = () => {
+		const inputNum = document.querySelectorAll('input[placeholder = "Номер телефона"], input[placeholder = "Ваш номер телефона"]'),
+			inputWords = document.querySelectorAll('input[placeholder = "Ваше имя"], input[placeholder = "Ваше сообщение"]');
 
-			if (calcCount.value > 1) {
-				countValue += (calcCount.value - 1) / 10;
-			}
-
-			if (calcDay.value && calcDay.value < 5) {
-				dayValue *= 2;
-			} else if (calcDay.value && calcDay.value < 10) {
-				dayValue *= 1.5;
-			}
-
-			if (typeValue && squareValue) {
-				total = price * typeValue * squareValue * countValue * dayValue;
-				total = Math.floor(total);
-			}
-
-			if (total !== 0) {
-				let numValue = Number(totalValue.textContent);
-				console.log(total);
-				const interval = setInterval(() => {
-					numValue++;
-					totalValue.textContent = numValue;
-					if (numValue === total) {
-						clearInterval(interval);
-					}
-				}, 10);
-			}
-
-		};
-
-		calcBlock.addEventListener('change', (event) => {
-			const target = event.target;
-
-			if (target === calcType || target === calcSquare ||
-				target === calcDay || target === calcCount) {
-				countSum();
-			}
+		inputNum.forEach(item => {
+			item.addEventListener('input', () => {
+				item.value = item.value.replace(/[^+\d]/g, '');
+			});
 		});
+
+		inputWords.forEach(item => {
+			item.addEventListener('input', () => {
+				item.value = item.value.replace(/[^а-яА-ЯёЁ\s]/ig, '');
+			});
+		});
+	};
+
+	formValidation();
+
+	// send ajax form
+
+	const sendForm = (form) => {
+		const erroreMessage = 'Что-то пошло не так',
+			loadMessage = 'Загрузка...',
+			successMessege = 'Спасибо, мы скоро с вами свяжемся';
+
+		const statusMessage = document.createElement('div');
+		statusMessage.style.cssText = `font-size: 2rem;
+										color: #fff;`;
+
+		form.addEventListener('submit', event => {
+			event.preventDefault();
+			form.append(statusMessage);
+			statusMessage.textContent = loadMessage;
+			const formData = new FormData(form);
+			const body = {};
+
+			for (const val of formData.entries()) {
+				body[val[0]] = val[1];
+			}
+			postData(body, () => {
+				const formInputs = form.querySelectorAll('input');
+				formInputs.forEach((elem) => {
+					elem.value = '';
+				});
+				statusMessage.textContent = successMessege;
+			}, (error) => {
+				console.error(error);
+				statusMessage.textContent = erroreMessage;
+			});
+		});
+
+		const postData = (body, outputData, errorData) => {
+			const request = new XMLHttpRequest();
+
+			request.addEventListener('readystatechange', () => {
+				if (request.readyState !== 4) {
+					return;
+				}
+
+				if (request.status === 200) {
+					outputData();
+				} else {
+					errorData(request.status);
+				}
+
+			});
+
+			request.open('POST', './server.php');
+			request.setRequestHeader('Content-Type', 'application/json');
+
+
+			request.send(JSON.stringify(body));
+		};
 
 	};
 
-	calc(100);
+	const formTop = document.getElementById('form1');
+	const formModal = document.getElementById('form3');
+	const formFooter = document.getElementById('form2');
 
-
+	sendForm(formTop);
+	sendForm(formModal);
+	sendForm(formFooter);
 });
