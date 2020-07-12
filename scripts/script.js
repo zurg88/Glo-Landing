@@ -362,8 +362,12 @@ window.addEventListener('DOMContentLoaded', () => {
 			successMessege = 'Спасибо, мы скоро с вами свяжемся';
 
 		const statusMessage = document.createElement('div');
-		statusMessage.style.cssText = `font-size: 2rem;
-										color: #fff;`;
+		statusMessage.classList.add('statusMessage');
+		const statusImg = document.createElement('img');
+		statusImg.src = '../images/mail.png';
+		statusImg.style.opacity = 1;
+		statusImg.style.position = 'relative';
+		let stepLeft = 10;
 
 		form.addEventListener('submit', event => {
 			event.preventDefault();
@@ -381,6 +385,9 @@ window.addEventListener('DOMContentLoaded', () => {
 					elem.value = '';
 				});
 				statusMessage.textContent = successMessege;
+				console.log(statusImg);
+				statusMessage.prepend(statusImg);
+				requestAnimationFrame(sentEmail);
 			}, (error) => {
 				console.error(error);
 				statusMessage.textContent = erroreMessage;
@@ -409,6 +416,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			request.send(JSON.stringify(body));
 		};
+
+		function sentEmail() {
+			const stepOpacity = 0.05;
+
+			stepLeft += 2;
+			statusImg.style.left = `${stepLeft}px`;
+			statusImg.style.opacity = +statusImg.style.opacity - stepOpacity;
+
+			if (statusImg.style.opacity !== '0') {
+				const animId = requestAnimationFrame(sentEmail);
+				console.log(statusImg.style.opacity, +stepLeft);
+				if (statusImg.style.opacity === '0') {
+					statusImg.style.display = 'none';
+					cancelAnimationFrame(animId);
+				}
+			}
+
+		}
 
 	};
 
