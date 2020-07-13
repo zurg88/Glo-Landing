@@ -356,7 +356,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	// send ajax form
 
-	const sendForm = (form) => {
+	const sendForm = form => {
+
 		const erroreMessage = 'Что-то пошло не так',
 			loadMessage = 'Загрузка...',
 			successMessege = 'Спасибо, мы скоро с вами свяжемся';
@@ -379,22 +380,20 @@ window.addEventListener('DOMContentLoaded', () => {
 			for (const val of formData.entries()) {
 				body[val[0]] = val[1];
 			}
-			postData(body, () => {
-				const formInputs = form.querySelectorAll('input');
-				formInputs.forEach((elem) => {
-					elem.value = '';
-				});
-				statusMessage.textContent = successMessege;
-				console.log(statusImg);
-				statusMessage.prepend(statusImg);
-				requestAnimationFrame(sentEmail);
-			}, (error) => {
-				console.error(error);
-				statusMessage.textContent = erroreMessage;
-			});
+			postData(body).then(outputData()).then(requestAnimationFrame(sentEmail)).catch(error => console.error(error));
 		});
 
-		const postData = (body, outputData, errorData) => {
+		const outputData = () => {
+			const formInputs = form.querySelectorAll('input');
+			formInputs.forEach(elem => {
+				elem.value = '';
+			});
+			statusMessage.textContent = successMessege;
+			statusMessage.prepend(statusImg);
+			
+		};
+
+		const postData = body => new Promise((resolve, reject) => {
 			const request = new XMLHttpRequest();
 
 			request.addEventListener('readystatechange', () => {
@@ -403,9 +402,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 
 				if (request.status === 200) {
-					outputData();
+					resolve();
 				} else {
-					errorData(request.status);
+					reject(request.status);
 				}
 
 			});
@@ -415,7 +414,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 			request.send(JSON.stringify(body));
-		};
+		});
 
 		function sentEmail() {
 			const stepOpacity = 0.05;
@@ -426,7 +425,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			if (statusImg.style.opacity !== '0') {
 				const animId = requestAnimationFrame(sentEmail);
-				console.log(statusImg.style.opacity, +stepLeft);
 				if (statusImg.style.opacity === '0') {
 					statusImg.style.display = 'none';
 					cancelAnimationFrame(animId);
