@@ -326,18 +326,86 @@ window.addEventListener('DOMContentLoaded', () => {
 		const calcItems = document.querySelectorAll('.calc-item');
 		calcItems.forEach(item => {
 			item.addEventListener('input', () => {
-				item.value = item.value.replace(/\D/g, '');
+				if (!item.classList.contains('calc-type')) {
+					item.value = item.value.replace(/\D/g, '');
+				}
 			});
 		});
 	};
 
 	calcValidation();
 
+	const calc = (price = 100) => {
+		const calcBlock = document.querySelector('.calc-block'),
+			calcType = document.querySelector('.calc-type'),
+			calcSquare = document.querySelector('.calc-square'),
+			calcDay = document.querySelector('.calc-day'),
+			calcCount = document.querySelector('.calc-count'),
+			totalValue = document.getElementById('total');
+
+		const countSum = () => {
+			let total = 0;
+			let countValue = 1;
+			let dayValue = 1;
+			const typeValue = calcType.options[calcType.selectedIndex].value;
+			const	squareValue = +calcSquare.value;
+
+			if (calcCount.value > 1) {
+				countValue += (calcCount.value - 1) / 10;
+			}
+
+			if (calcDay.value && calcDay.value < 5) {
+				dayValue *= 2;
+			} else if (calcDay.value && calcDay.value < 10) {
+				dayValue *= 1.5;
+			}
+
+			if (typeValue && squareValue) {
+				total = price * typeValue * squareValue * countValue * dayValue;
+				total = Math.floor(total);
+			}
+
+			if (total !== 0) {
+				let numValue = Number(totalValue.textContent);
+				// console.log(total);
+				const interval = setInterval(() => {
+
+					if (numValue < total) {
+						const totalPart = total / 20;
+						numValue += totalPart;
+						totalValue.textContent = Math.floor(numValue);
+					} else if (numValue > total) {
+						const totalPart = (numValue - total) / 20;
+						numValue -= totalPart;
+						totalValue.textContent = Math.floor(numValue);
+					}
+					if (numValue === total) {
+						clearInterval(interval);
+					}
+				}, 10);
+			}
+
+		};
+
+		calcBlock.addEventListener('change', event => {
+			const target = event.target;
+
+			if (target === calcType || target === calcSquare ||
+				target === calcDay || target === calcCount) {
+				countSum();
+			}
+		});
+
+	};
+
+	calc(100);
+
 	// Form Validation
 
 	const formValidation = () => {
 		const inputNum = document.querySelectorAll('input[placeholder = "Номер телефона"], input[placeholder = "Ваш номер телефона"]'),
-			inputWords = document.querySelectorAll('input[placeholder = "Ваше имя"], input[placeholder = "Ваше сообщение"]');
+			inputWords = document.querySelectorAll('input[placeholder = "Ваше имя"]'),
+			inputMassege = document.querySelector('input[placeholder = "Ваше сообщение"]');
 
 		inputNum.forEach(item => {
 			item.addEventListener('input', () => {
@@ -349,6 +417,10 @@ window.addEventListener('DOMContentLoaded', () => {
 			item.addEventListener('input', () => {
 				item.value = item.value.replace(/[^а-яА-ЯёЁ\s]/ig, '');
 			});
+		});
+
+		inputMassege.addEventListener('input', () => {
+			inputMassege.value = inputMassege.value.replace(/[^!?.,а-яА-ЯёЁ\s]/ig, '');
 		});
 	};
 
@@ -390,7 +462,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			});
 			statusMessage.textContent = successMessege;
 			statusMessage.prepend(statusImg);
-			
+
 		};
 
 		const postData = body => new Promise((resolve, reject) => {
