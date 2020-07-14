@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-empty */
 /* eslint-disable no-mixed-spaces-and-tabs */
 
@@ -449,10 +450,18 @@ window.addEventListener('DOMContentLoaded', () => {
 			const formData = new FormData(form);
 			const body = {};
 
-			for (const val of formData.entries()) {
-				body[val[0]] = val[1];
-			}
-			postData(body).then(outputData()).then(requestAnimationFrame(sentEmail)).catch(error => console.error(error));
+			// for (const val of formData.entries()) {
+			// 	body[val[0]] = val[1];
+			// }
+			postData(body).then((response) => {
+				outputData();
+				if (response.status !== 200) {
+					throw new Error('status network not 200');
+				}
+			}).catch(error => {
+				statusMessage.textContent = erroreMessage;
+				console.error(error);
+			});
 		});
 
 		const outputData = () => {
@@ -462,35 +471,19 @@ window.addEventListener('DOMContentLoaded', () => {
 			});
 			statusMessage.textContent = successMessege;
 			statusMessage.prepend(statusImg);
-
+			requestAnimationFrame(sentEmail);
 		};
 
-		const postData = body => new Promise((resolve, reject) => {
-			const request = new XMLHttpRequest();
-
-			request.addEventListener('readystatechange', () => {
-				if (request.readyState !== 4) {
-					return;
-				}
-
-				if (request.status === 200) {
-					resolve();
-				} else {
-					reject(request.status);
-				}
-
+		const postData = body => {
+			return fetch('./server.php', {
+				method: 'POST',
+				headers: { 'Content-Type': 'multipart/form-data' },
+				body: new FormData(form)
 			});
-
-			request.open('POST', './server.php');
-			request.setRequestHeader('Content-Type', 'application/json');
-
-
-			request.send(JSON.stringify(body));
-		});
+		};
 
 		function sentEmail() {
 			const stepOpacity = 0.05;
-
 			stepLeft += 2;
 			statusImg.style.left = `${stepLeft}px`;
 			statusImg.style.opacity = +statusImg.style.opacity - stepOpacity;
@@ -502,9 +495,7 @@ window.addEventListener('DOMContentLoaded', () => {
 					cancelAnimationFrame(animId);
 				}
 			}
-
 		}
-
 	};
 
 	const formTop = document.getElementById('form1');
