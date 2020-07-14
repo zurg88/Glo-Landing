@@ -366,26 +366,24 @@ window.addEventListener('DOMContentLoaded', () => {
 				total = Math.floor(total);
 			}
 
-			if (total !== 0) {
-				let numValue = Number(totalValue.textContent);
-				// console.log(total);
-				const interval = setInterval(() => {
+			function animCalc() {
+				let numValue = 0;
 
+				const interval = setInterval(() => {
+					console.log(total);
 					if (numValue < total) {
 						const totalPart = total / 20;
 						numValue += totalPart;
 						totalValue.textContent = Math.floor(numValue);
-					} else if (numValue > total) {
-						const totalPart = (numValue - total) / 20;
-						numValue -= totalPart;
-						totalValue.textContent = Math.floor(numValue);
 					}
 					if (numValue === total) {
 						clearInterval(interval);
+						console.log('1');
 					}
+
 				}, 10);
 			}
-
+			animCalc();
 		};
 
 		calcBlock.addEventListener('change', event => {
