@@ -15,7 +15,7 @@ const slider = () => {
 		dotElement.classList.add('dot');
 		portfolioDots.append(dotElement);
 
-		if (dotsCollection.length < slide.length) {
+		if (dotsCollection.length < slide.length - 1) {
 			createDots();
 		} else if (dotsCollection.length === slide.length) {
 			dotsCollection[0].classList.add('dot-active');
@@ -42,7 +42,8 @@ const slider = () => {
 			currentSlide = 0;
 		}
 		nextSlide(slide, currentSlide, 'portfolio-item-active');
-		nextSlide(dot, currentSlide, 'dot-active');	 };
+		nextSlide(dot, currentSlide, 'dot-active');	 
+	};
 
 	const startSlide = (time = 2500) => {
 		interval = setInterval(autoPlaySlide, time);

@@ -34,7 +34,6 @@ const calc = (price = 100) => {
 			let numValue = 0;
 
 			const interval = setInterval(() => {
-				console.log(total);
 				if (numValue < total) {
 					const totalPart = total / 20;
 					numValue += totalPart;
